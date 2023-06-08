@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Drag and Drop Example</title>
+  <style>
+    .container {
+      display: flex;
+    }
+    .container div {
+      width: 200px;
+      padding: 10px;
+      margin: 10px;
+      background-color: #f1f1f1;
+    }
+    .item {
+      margin-bottom: 5px;
+      cursor: grab;
+    }
+    .item.dragging {
+      opacity: 0.5;
+    }
+    .success {
+      background-color: lightgreen;
+    }
+    #successMessage {
+      margin-top: 10px;
+      color: green;
+      font-weight: bold;
+    }
+
+    @media screen and (max-width: 600px) {
+      .container {
+        flex-direction: column;
+      }
+      .container div {
+        width: auto;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="container1" ondrop="drop(event)" ondragover="allowDrop(event)">
+      <div class="item" draggable="true" ondragstart="drag(event)">
+        <img src="./Dinner image.png" alt="Dinner Image">
+      </div>
+      <div class="item" draggable="true" ondragstart="drag(event)">
+        <img src="./party image.png" alt="Party Image">
+      </div>
+      <div class="item" draggable="true" ondragstart="drag(event)">
+        <img src="./lunch image.png" alt="Lunch Image">
+      </div>
+    </div>
+    <div id="container2" ondrop="drop(event)" ondragover="allowDrop(event)"></div>
+  </div>
+  <div id="successMessage"></div>
+  <button onclick="reset()">Reset</button>
+
+  <script>
+    function allowDrop(event) {
+      event.preventDefault();
+    }
+
+    function drag(event) {
+      event.dataTransfer.setData("text", event.target.outerHTML); // Store the entire dragged element
+      event.target.classList.add("dragging"); // Add the dragging class to the dragged item
+    }
+
+    function drop(event) {
+      event.preventDefault();
+      var data = event.dataTransfer.getData("text");
+      var element = document.createElement("div"); // Create a new div element
+      element.innerHTML = data; // Set the HTML content of the div element to the stored element
+      var draggedElement = element.firstChild; // Store the dragged element
+      draggedElement.classList.remove("dragging"); // Remove the dragging class from the dragged item
+      var container2 = document.getElementById("container2");
+      container2.appendChild(draggedElement); // Append the dragged element to container2
+      draggedElement.classList.add("success"); // Add the success class to the dropped item
+      
+      var successMessage = document.getElementById("successMessage");
+      if (!successMessage.textContent) { // Check if the success message is empty
+        successMessage.textContent = "Item dropped successfully!"; // Update the success message
+      }
+    }
+
+    function reset() {
+      var container1 = document.getElementById("container1");
+      var container2 = document.getElementById("container2");
+      container2.innerHTML = '';
+      var items = container1.getElementsByClassName("item");
+      for (var i = 0; i < items.length; i++) {
+        items[i].classList.remove("success");
+      }
+      document.getElementById("successMessage").textContent = ''; // Clear the success message
+    }
+  </script>
+</body>
+</html>
